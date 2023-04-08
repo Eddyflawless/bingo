@@ -1,0 +1,16 @@
+# Ignore Git files
+.git
+
+# Ignore editor and system files
+*.swp
+.DS_Store
+
+# Ignore Go build artifacts
+*.exe
+*.test
+*.prof
+*.out
+
+# Ignore vendor directory
+vendor/
+.misc/
