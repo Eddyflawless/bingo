@@ -9,10 +9,15 @@ import (
 )
 
 const (
-	RATE_LIMIT_IN_SECONDS  = 5
+	RATE_LIMIT_IN_SECONDS = 5
+	WORK_POOL_SIZE        = 4
+)
+
+var (
 	TOTAL_REQUESTS         = 100
 	CHUNK_SIZE_PER_REQUEST = 10
-	WORK_POOL_SIZE         = 4
+	TARGET_URL             = "http://localhost:3000"
+	USE_DURATION           = false
 )
 
 var taskQueue = make(chan int, CHUNK_SIZE_PER_REQUEST)
@@ -106,17 +111,6 @@ func cleanUp() {
 	close(taskQueue)
 }
 
-/***
-
--n Number of requests to run. Default is 200
--c Number of workers to run concurrently. Total number of requests cannot be
-smaller than the concurrency level. Default is 50.
--q Rate limit, in queries per second (QPS) per worker. Default is no rate limit.
--z Duration of application to send requests. When duration is reached, application
-stops and exits. If duration is specified, n is ignored.
-Examples: -z 10s -z 3m
-
-***/
 func main() {
 
 	isDone := make(chan bool, 1)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -13,6 +14,12 @@ const (
 	workerSize              int           = 3
 	jobSize                 int           = 20
 	requestTimeOutInSeconds time.Duration = 4
+)
+
+var (
+	TOTAL_REQUESTS         = 100
+	CHUNK_SIZE_PER_REQUEST = 10
+	USE_DURATION           = false
 )
 
 type Site struct {
@@ -88,6 +95,31 @@ func crawl(wId int, jobs <-chan Site, results chan<- Result, wg *sync.WaitGroup)
 		log.Printf("Worker %d: %s", wId, site)
 		makeHttpRequest(site, results)
 	}
+}
+
+/***
+
+-n Number of requests to run. Default is 200
+-c Number of workers to run concurrently. Total number of requests cannot be
+smaller than the concurrency level. Default is 50.
+-q Rate limit, in queries per second (QPS) per worker. Default is no rate limit.
+-z Duration of application to send requests. When duration is reached, application
+stops and exits. If duration is specified, n is ignored.
+Examples: -z 10s -z 3m
+
+***/
+func commandPrompt() {
+
+	// chunk size
+	chunkSizePtr := flag.Int("chunkSize", CHUNK_SIZE_PER_REQUEST, "chunk size for processing")
+
+	// use duration
+	durationPtr := flag.Bool("duration", USE_DURATION, "Enable duration based execution instead of using number of workers")
+
+	flag.Parse()
+	USE_DURATION = *durationPtr
+	CHUNK_SIZE_PER_REQUEST = *chunkSizePtr
+	fmt.Println("tail:", flag.Args())
 }
 
 func main() {
