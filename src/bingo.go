@@ -21,7 +21,7 @@ var (
 	CHUNK_SIZE_PER_REQUEST     = 10
 	USE_DURATION               = false
 	SITE                       = "http://localhost:8080"
-	QPS                        = 0
+	QPS                        = 5
 )
 
 type Result struct {
